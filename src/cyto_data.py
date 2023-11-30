@@ -2,7 +2,7 @@
 """
 
 # Global imports
-import readfcs
+import fcsparser
 import pandas as pd
 
 # Class definition
@@ -19,7 +19,13 @@ class cyto_data(pd.DataFrame):
         """
         
         # Read the cytometry data
-        (metadata, data) = readfcs.view(filepath)
+        (metadata, data) = fcsparser.parse(filepath)
+
+        # Fix the binary data
+        metadata["__header__"]["FCS format"] = (
+            metadata["__header__"]["FCS format"]
+            .decode("utf-8")
+        )
 
         # Initialize the DataFrame
         super().__init__(dict(data))

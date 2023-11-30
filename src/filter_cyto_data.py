@@ -6,7 +6,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from matplotlib.widgets import LassoSelector
-from cyto_data import cyto_data
+from .cyto_data import cyto_data
+import argparse
+import json
+import sys
+from functools import reduce
+
 
 # Class definition
 class cyto_lasso_filter():
@@ -124,34 +129,100 @@ class cyto_lasso_filter():
 
         return self.idx
 
-if __name__ == "__main__":
+# Parser
+def parser():
+    # Create the parser
+    parser = argparse.ArgumentParser(
+        description="Filter your flow cytometry files by manual selection on some channels."
+    )
 
-    data = cyto_data("sample_data/10-11-2023_AUTOF_001.fcs")
+    # Add arguments
+    parser.add_argument(
+        "--input",
+        help="Input file path",
+        required=True
+    )
+    parser.add_argument(
+        "--output",
+        help="Output file path",
+        required=True
+    )
+    parser.add_argument(
+        "--metadata",
+        help="Export metadata as json",
+        action="store_true"
+    )
+    parser.add_argument(
+        "--channels",
+        help="Channels to use",
+        nargs="+"
+    )
+
+    # Parse the command-line arguments
+    args = parser.parse_args()
+
+    # Return the parsed arguments
+    return args
+
+# Main
+def main():
+
+    # Parse the command-line arguments
+    args = parser()
+
+    # Default channels that have to be always checked
+    channels = [("FSC-A", "SSC-A")]
+
+    # Add the channels specified by the user
+    if not args.channels is None:
+        channels += [
+            (channel, "FSC-A")
+            for channel in args.channels
+        ]
+
+    # Load the data
+    data = cyto_data(args.input)
 
     filters = []
 
-    filters.append(
-        cyto_lasso_filter(
-            data,
-            channels=["FSC-A", "SSC-A"]
-        ).run()
-    )
+    # Run the filter for each combination of channels
+    for combination in channels:
+        
+        # Check if the channel is present in the data
+        if combination[0] not in data.columns:
+            print(f"Channel {combination[0]} not found in data. Skipping.")
+            continue
 
-    filters.append(
-        cyto_lasso_filter(
-            data,
-            channels=["FITC-A", "FSC-A"]
-        ).run()
-    )
+        # Run the filter
+        filtered = (
+            cyto_lasso_filter(
+                data,
+                channels=combination
+            ).run()
+        )
 
-    final_indexes = np.intersect1d(*filters)
+        if len(filtered) == 0:
+            print(f"No points selected for channel combinations {combination}. Skipping.")
+            continue
+
+        filters.append(filtered)
+
+    # Check if any points were selected
+    if len(filters) == 0:
+        print("No points selected. Exiting.")
+        sys.exit()
+
+    # Intersect the filters to get the final selection
+    final_indexes = reduce(np.intersect1d, filters)
     
+    # Plot all the points
     fig, ax = cyto_lasso_filter.cyto_scatter(
         data["FSC-A"],
         data["SSC-A"],
         title=f"{data.filepath}\nFinal selection"
     )
 
+    # Plot the final selection on top
     fig, ax = cyto_lasso_filter.cyto_scatter(
         data.loc[final_indexes, "FSC-A"],
         data.loc[final_indexes, "SSC-A"],
@@ -160,6 +231,25 @@ if __name__ == "__main__":
         ax=ax
     )
 
-    print(data.loc[final_indexes, :])
+    # Get the final selection and show it
+    out = data.loc[final_indexes, :]
 
+    print("Selected data:\n", out)
+
+    # Show the plots
     plt.show()
+
+    # Save the data
+    out.to_parquet(
+        f"{args.output}.parquet.gzip",
+        compression="gzip"
+    )
+
+    print(f"Saved to {args.output}.parquet.gzip")
+
+    # Save the metadata
+    if args.metadata:
+        with open(f"{args.input}_metadata.json", "w") as f:
+            json.dump(data.metadata, f, indent=4)
+
+        print(f"Saved metadata to {args.output}.json")
