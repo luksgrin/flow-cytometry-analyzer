@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling", "numpy", "matplotlib", "fcsparser", "pandas"]
+build-backend = "hatchling.build"
+
+[project]
+name = "flow_cytometry_analizer2"
+version = "0.0.1"
+authors = [
+  { name="Lucas Goiriz", email="lucas.goiriz@csic.es" },
+]
+description = "Filter your flow cytometry files by manual selection on some channels"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/luksgrin/flow-cytometry-analyzer"
+Issues = "https://github.com/luksgrin/flow-cytometry-analyzer/issues"
+
+[project.scripts]
+flow_cytometry_analizer = "flow_cytometry_analizer.__main__:main"

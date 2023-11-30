@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from matplotlib.widgets import LassoSelector
-from .cyto_data import cyto_data
+from cyto_data import cyto_data
 import argparse
 import json
 import sys
