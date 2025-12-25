@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow Cytometry Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Light mode (default) */
+        body[data-theme="light"] {
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        /* Dim mode */
+        body[data-theme="dim"] {
+            background: #1a1d29;
+            color: #e5e5e5;
+        }
+        
+        body[data-theme="dim"] .container {
+            background: #252836;
+            color: #e5e5e5;
+        }
+        
+        body[data-theme="dim"] header {
+            background: linear-gradient(135deg, #5b6ee8 0%, #7c5dd8 100%);
+        }
+        
+        body[data-theme="dim"] .controls,
+        body[data-theme="dim"] .file-info,
+        body[data-theme="dim"] .plot-container {
+            background: #2a2f3f;
+            color: #e5e5e5;
+        }
+        
+        body[data-theme="dim"] .plot-title {
+            color: #a5b4fc;
+            font-weight: 600;
+        }
+        
+        body[data-theme="dim"] .status.info {
+            background: #1e3a5f;
+            color: #93c5fd;
+            border-left-color: #60a5fa;
+        }
+        
+        body[data-theme="dim"] .status.success {
+            background: #1a4d3a;
+            color: #6ee7b7;
+            border-left-color: #34d399;
+        }
+        
+        body[data-theme="dim"] .status.warning {
+            background: #5a3a1a;
+            color: #fcd34d;
+            border-left-color: #fbbf24;
+        }
+        
+        body[data-theme="dim"] canvas {
+            background-color: #1a1d29;
+            border-color: #5b6ee8;
+        }
+        
+        body[data-theme="dim"] .channel-tag {
+            background-color: #3b4a6b;
+            color: #a5b4fc;
+            border: 1px solid #5b6ee8;
+        }
+        
+        body[data-theme="dim"] button {
+            background-color: #5b6ee8;
+        }
+        
+        body[data-theme="dim"] button:hover:not(:disabled) {
+            background-color: #6b7ef8;
+            box-shadow: 0 4px 8px rgba(91, 110, 232, 0.3);
+        }
+        
+        body[data-theme="dim"] button.secondary {
+            background-color: #6b7280;
+        }
+        
+        body[data-theme="dim"] button.secondary:hover:not(:disabled) {
+            background-color: #7c7f85;
+        }
+        
+        body[data-theme="dim"] button.success {
+            background-color: #10b981;
+        }
+        
+        body[data-theme="dim"] button.success:hover:not(:disabled) {
+            background-color: #34d399;
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+        }
+        
+        body[data-theme="dim"] select {
+            background-color: #2a2f3f;
+            color: #e5e5e5;
+            border-color: #5b6ee8;
+        }
+        
+        body[data-theme="dim"] .export-options {
+            background: #2a2f3f;
+        }
+        
+        body[data-theme="dim"] .file-info {
+            border-left-color: #5b6ee8;
+        }
+        
+        body[data-theme="dim"] .file-info strong {
+            color: #a5b4fc;
+        }
+        
+        /* Dark mode */
+        body[data-theme="dark"] {
+            background: #0d1117;
+            color: #c9d1d9;
+        }
+        
+        body[data-theme="dark"] .container {
+            background: #161b22;
+            color: #c9d1d9;
+        }
+        
+        body[data-theme="dark"] header {
+            background: linear-gradient(135deg, #6e40c9 0%, #8b5cf6 100%);
+        }
+        
+        body[data-theme="dark"] .controls,
+        body[data-theme="dark"] .file-info,
+        body[data-theme="dark"] .plot-container {
+            background: #1c2128;
+            color: #c9d1d9;
+        }
+        
+        body[data-theme="dark"] .plot-title {
+            color: #a78bfa;
+            font-weight: 600;
+        }
+        
+        body[data-theme="dark"] .status.info {
+            background: #1c2a3f;
+            color: #79c0ff;
+            border-left-color: #58a6ff;
+        }
+        
+        body[data-theme="dark"] .status.success {
+            background: #1a4d2e;
+            color: #7ee787;
+            border-left-color: #3fb950;
+        }
+        
+        body[data-theme="dark"] .status.warning {
+            background: #4a2e0a;
+            color: #fbbf24;
+            border-left-color: #f59e0b;
+        }
+        
+        body[data-theme="dark"] canvas {
+            background-color: #0d1117;
+            border-color: #6e40c9;
+        }
+        
+        body[data-theme="dark"] .channel-tag {
+            background-color: #2d1b4e;
+            color: #a78bfa;
+            border: 1px solid #6e40c9;
+        }
+        
+        body[data-theme="dark"] button {
+            background-color: #6e40c9;
+        }
+        
+        body[data-theme="dark"] button:hover:not(:disabled) {
+            background-color: #7e50d9;
+            box-shadow: 0 4px 8px rgba(110, 64, 201, 0.4);
+        }
+        
+        body[data-theme="dark"] button.secondary {
+            background-color: #30363d;
+        }
+        
+        body[data-theme="dark"] button.secondary:hover:not(:disabled) {
+            background-color: #484f58;
+        }
+        
+        body[data-theme="dark"] button.success {
+            background-color: #238636;
+        }
+        
+        body[data-theme="dark"] button.success:hover:not(:disabled) {
+            background-color: #3fb950;
+            box-shadow: 0 4px 8px rgba(35, 134, 54, 0.3);
+        }
+        
+        body[data-theme="dark"] select {
+            background-color: #1c2128;
+            color: #c9d1d9;
+            border-color: #6e40c9;
+        }
+        
+        body[data-theme="dark"] .export-options {
+            background: #1c2128;
+        }
+        
+        body[data-theme="dark"] .file-info {
+            border-left-color: #6e40c9;
+        }
+        
+        body[data-theme="dark"] .file-info strong {
+            color: #a78bfa;
+        }
+        
+        body[data-theme="dim"] .instructions {
+            background: #2a2f3f;
+            color: #9ca3af;
+            border: 1px solid #5b6ee8;
+        }
+        
+        body[data-theme="dark"] .instructions {
+            background: #1c2128;
+            color: #9ca3af;
+            border: 1px solid #6e40c9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #667eea;
+            color: white;
+        }
+
+        button:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button.secondary {
+            background: #6c757d;
+        }
+
+        button.secondary:hover:not(:disabled) {
+            background: #5a6268;
+        }
+
+        button.success {
+            background: #28a745;
+        }
+
+        button.success:hover:not(:disabled) {
+            background: #218838;
+        }
+
+        .file-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .file-info strong {
+            color: #667eea;
+        }
+
+        .plot-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .plot-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        canvas {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: crosshair;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        .channels-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .channel-tag {
+            padding: 6px 12px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        
+        .channel-tag:hover {
+            background: #dee2e6;
+            transform: translateY(-1px);
+        }
+        
+        .channel-tag.selected {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+        }
+        
+        body[data-theme="dim"] .channel-tag.selected {
+            background: #5b6ee8;
+            box-shadow: 0 2px 4px rgba(91, 110, 232, 0.4);
+        }
+        
+        body[data-theme="dark"] .channel-tag.selected {
+            background: #6e40c9;
+            box-shadow: 0 2px 4px rgba(110, 64, 201, 0.4);
+        }
+
+        .export-options {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+        
+        #filterSummary {
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+        
+        body[data-theme="dim"] #filterSummary {
+            background: #1e3a5f;
+            color: #93c5fd;
+        }
+        
+        body[data-theme="dark"] #filterSummary {
+            background: #1c2a3f;
+            color: #79c0ff;
+        }
+        
+        #existingFilterWarning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        body[data-theme="dim"] #existingFilterWarning {
+            background: #5a3a1a;
+            color: #fcd34d;
+        }
+        
+        body[data-theme="dark"] #existingFilterWarning {
+            background: #4a2e0a;
+            color: #fbbf24;
+        }
+    </style>
+  <script type="module" src="/main.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>Flow Cytometry Analyzer</h1>
+                    <p class="subtitle">Interactive filtering tool for FCS files - Free alternative to FlowJo</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label for="themeSelect" style="font-size: 14px; opacity: 0.9;">Theme:</label>
+                    <select id="themeSelect" style="padding: 6px 10px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-size: 14px; cursor: pointer;">
+                        <option value="system">System</option>
+                        <option value="light">Light</option>
+                        <option value="dim">Dim</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="button-group">
+                <button id="loadBtn">Load FCS File</button>
+                <button id="exportBtn" class="success" disabled>Export Filtered Data</button>
+            </div>
+
+            <div id="fileInfo" class="file-info hidden">
+                <div><strong>File:</strong> <span id="fileName"></span></div>
+                <div><strong>Channels:</strong> <span id="channelCount"></span></div>
+                <div><strong>Events:</strong> <span id="eventCount"></span></div>
+                <div class="channels-list" id="channelsList"></div>
+            </div>
+
+            <div id="status" class="status info hidden"></div>
+
+            <div id="exportOptions" class="export-options hidden">
+                <label for="exportFormat"><strong>Export Format:</strong></label>
+                <select id="exportFormat">
+                    <option value="xlsx">Excel (.xlsx)</option>
+                    <option value="csv">CSV (.csv)</option>
+                    <option value="parquet">Parquet (.parquet.gzip)</option>
+                </select>
+            </div>
+        </div>
+
+                <div id="plotContainer" class="plot-container hidden">
+                    <div class="plot-title" id="plotTitle">Scatter Plot</div>
+                    <div id="filterSummary" style="margin-bottom: 10px; padding: 10px; background: #e3f2fd; border-radius: 6px; font-size: 14px; text-align: center; display: none;">
+                        <strong id="filterSummaryText"></strong>
+                    </div>
+                    <div id="existingFilterWarning" style="margin-bottom: 10px; padding: 10px; background: #fff3cd; border-radius: 6px; font-size: 14px; text-align: center; display: none;">
+                        <strong>This channel combination already has a saved filter.</strong>
+                        <button id="resetFilterBtn" style="margin-left: 10px; padding: 4px 12px; background: #ffc107; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Reset and Re-select</button>
+                    </div>
+                    <div style="margin-bottom: 10px; display: flex; gap: 20px; justify-content: center; align-items: center; flex-wrap: wrap;">
+                        <label style="display: flex; align-items: center; gap: 5px; font-size: 14px;">
+                            <input type="checkbox" id="xAxisLogScale" checked>
+                            <span>X-axis: Log scale</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; font-size: 14px;">
+                            <input type="checkbox" id="yAxisLogScale" checked>
+                            <span>Y-axis: Log scale</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; font-size: 14px;">
+                            <input type="checkbox" id="showPastFilters">
+                            <span>Show excluded points from past filters</span>
+                        </label>
+                    </div>
+                    <div style="position: relative; display: inline-block;">
+                        <canvas id="plotCanvas" width="800" height="600"></canvas>
+                        <div id="axisLabelsContainer" style="position: absolute; top: 0; left: 0; pointer-events: none; width: 100%; height: 100%;"></div>
+                    </div>
+            <div class="instructions" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 12px; color: #666; text-align: center;">
+                <strong>Instructions:</strong> Left-click and drag to draw lasso selection (auto-closes on release) | Right-click and drag to pan | Scroll wheel to zoom
+            </div>
+            <div style="margin-top: 15px; text-align: center; display: flex; gap: 10px; justify-content: center; align-items: center;">
+                <button id="zoomInBtn" class="secondary" title="Zoom In">+</button>
+                <button id="zoomOutBtn" class="secondary" title="Zoom Out">−</button>
+                <button id="resetZoomBtn" class="secondary" title="Reset Zoom">Reset</button>
+                <span style="margin: 0 20px;">|</span>
+                <button id="confirmSelectionBtn" class="secondary">Confirm Selection</button>
+                <button id="clearSelectionBtn" class="secondary">Clear Selection</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+

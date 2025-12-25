@@ -1,0 +1,71 @@
+{
+  "productName": "Flow Cytometry Analyzer",
+  "version": "0.1.0",
+  "identifier": "com.rodrigolab.flowcytometryanalyzer",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Flow Cytometry Analyzer",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 900,
+        "minHeight": 700,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null,
+      "capabilities": [
+        {
+          "identifier": "main-capability",
+          "description": "Main window capability with dialog and filesystem access",
+          "windows": ["main"],
+          "permissions": [
+            "core:default",
+            "dialog:default",
+            "dialog:allow-open",
+            "dialog:allow-save",
+            "fs:default",
+            "fs:allow-read-file",
+            "fs:allow-write-file",
+            "fs:allow-read-dir",
+            "fs:allow-exists"
+          ]
+        }
+      ]
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["app", "dmg"],
+    "icon": [],
+    "resources": [],
+    "externalBin": [],
+    "copyright": "",
+    "category": "public.app-category.utilities",
+    "shortDescription": "Interactive filtering tool for FCS files",
+    "longDescription": "An interactive filtering tool for Flow Cytometry Standard (FCS) files that allows you to manually select regions of interest using lasso selection on scatter plots. This is a free, open-source alternative to FlowJo for basic gating operations.",
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
+    },
+    "macOS": {
+      "frameworks": [],
+      "minimumSystemVersion": "10.13",
+      "exceptionDomain": "",
+      "signingIdentity": null,
+      "providerShortName": null,
+      "entitlements": null
+    }
+  },
+  "plugins": {}
+}

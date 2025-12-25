@@ -2,139 +2,79 @@
 
 An interactive filtering tool for Flow Cytometry Standard (FCS) files that allows you to manually select regions of interest using lasso selection on scatter plots. This is a free, open-source alternative to FlowJo for basic gating operations.
 
-## What This Software Does
+Built with Rust and Tauri for cross-platform desktop applications.
 
-The Flow Cytometry Analyzer helps you filter flow cytometry data by:
+## Features
 
-1. **Loading FCS files**: Reads standard flow cytometry data files (.fcs format)
-2. **Interactive gating**: Creates scatter plots where you can draw lasso selections around regions of interest
-3. **Multi-channel filtering**: 
-   - Always performs initial gating on **FSC-A vs SSC-A** (standard forward and side scatter channels)
-   - Allows additional filtering on any other channels you specify (e.g., FITC-A, PE-A, APC-A)
-   - Each additional channel is plotted against FSC-A for selection
-4. **Data export**: Saves filtered data in multiple formats:
-   - Excel (.xlsx) - default format, easy to view
-   - CSV (.csv) - universal text format
-   - Parquet (.parquet.gzip) - efficient binary format for data analysis
-5. **Metadata export**: Optionally exports FCS file metadata (instrument settings, acquisition parameters) as JSON
-
-The final filtered dataset contains only the events (cells) that fall within **all** of your selected regions (intersection of all gates).
+- Load and parse FCS files
+- Interactive scatter plot visualization
+- Lasso selection for filtering data points
+- Multiple filter support with intersection
+- Export filtered data to CSV, Excel, or Parquet formats
+- Log and linear scale options for axes
+- Zoom and pan functionality
+- Dark, dim, and light theme support
+- Clickable channel selection
 
 ## Installation
 
 ### Prerequisites
 
-- **Python 3.10 or higher** must be installed on your system
-- **Git** (optional, for automatic updates)
+- Rust (latest stable version)
+- Node.js and npm
+- System dependencies for Tauri (see [Tauri prerequisites](https://tauri.app/v1/guides/getting-started/prerequisites))
 
-### Setup
+### Building
 
-The installation is automated through the `run.sh` script. Simply ensure you have Python 3.10+ installed, and the script will handle everything else:
-
-1. Creates a Python virtual environment (if it doesn't exist)
-2. Installs all required dependencies automatically
-3. Checks for updates from the repository (if it's a git repository)
-
-**No manual installation steps required!** The `run.sh` script takes care of everything.
-
-## Running the Software
-
-### Quick Start
-
-1. **Navigate to the project directory**:
-   ```bash
-   cd flow-cytometry-analyzer
-   ```
-
-2. **Run the script**:
-   ```bash
-   ./run.sh
-   ```
-
-That's it! The script will:
-- Set up the environment (if needed)
-- Install/update dependencies
-- Launch the Flow Cytometry Analyzer
-
-### Command Line Usage
-
-After running `./run.sh`, you can pass command-line arguments directly:
-
+1. Clone the repository:
 ```bash
-./run.sh --input data.fcs --output filtered_data
+git clone <repository-url>
+cd flow-cytometry-analyzer
 ```
 
-Or with additional options:
-
+2. Install frontend dependencies:
 ```bash
-./run.sh --input data.fcs --output filtered_data --channels FITC-A PE-A --format csv --metadata
+npm install
 ```
 
-### Command Line Options
-
-- `--input FILE`: Path to your input FCS file (required)
-- `--output PATH`: Base path for the output file (required). The format will be detected from the extension if you include one (.xlsx, .csv, or .parquet.gzip)
-- `--channels CHANNEL [CHANNEL ...]`: Additional channels to use for filtering (space-separated). Common examples: FITC-A, PE-A, APC-A, PerCP-A, SSC-W, FSC-W
-- `--format {xlsx,csv,parquet}`: Export format (default: xlsx)
-- `--list-channels`: List all available channels in the FCS file and exit
-- `--metadata`: Export FCS file metadata as JSON
-- `--help`: Show detailed help message with examples
-
-### Examples
-
-**List available channels in a file:**
+3. Build the application:
 ```bash
-./run.sh --input data.fcs --list-channels
+npm run tauri build
 ```
 
-**Basic usage (exports as Excel by default):**
+The built application will be in `src-tauri/target/release/bundle/`.
+
+### Development
+
+Run the development server:
 ```bash
-./run.sh --input data.fcs --output filtered_data
+npm run tauri dev
 ```
 
-**Export as CSV format:**
-```bash
-./run.sh --input data.fcs --output filtered_data --format csv
-```
+## Usage
 
-**With additional channels for filtering:**
-```bash
-./run.sh --input data.fcs --output filtered_data --channels FITC-A PE-A
-```
+1. Launch the application
+2. Click "Load FCS File" to select an FCS file
+3. Select two channels by clicking on them (default: first two channels)
+4. Use left-click and drag to draw a lasso selection around points to keep
+5. Click "Confirm Selection" to save the filter
+6. Select different channels and create additional filters
+7. Export the filtered data using "Export Filtered Data"
 
-**Export metadata as well:**
-```bash
-./run.sh --input data.fcs --output filtered_data --metadata
-```
+### Plot Controls
 
-**Format detected from file extension:**
-```bash
-./run.sh --input data.fcs --output filtered_data.csv
-./run.sh --input data.fcs --output filtered_data.parquet.gzip
-```
+- **Left-click and drag**: Draw lasso selection (auto-closes on release)
+- **Right-click and drag**: Pan the plot
+- **Scroll wheel**: Zoom in/out
+- **Checkboxes**: Toggle log scale for X or Y axis
+- **Show excluded points**: Toggle to see points excluded by other filters
 
-## How It Works
+## Export Formats
 
-1. **Initial gating**: The program always starts with FSC-A vs SSC-A scatter plot. Use your mouse to draw a lasso selection around the region of interest.
+- **CSV**: Comma-separated values
+- **Excel**: XLSX format with metadata and data sheets
+- **Parquet**: Compressed columnar format
 
-2. **Additional channels**: For each channel you specify with `--channels`, the program creates a plot of that channel vs FSC-A. Draw lasso selections on each plot.
+## License
 
-3. **Selection process**: 
-   - Click and drag with your mouse to draw a polygon around the region you want to keep
-   - Selected points will be highlighted in green
-   - Close the plot window to proceed to the next selection or finalize
-
-4. **Final result**: The filtered data contains only events that fall within **all** selected regions (intersection of all gates).
-
-5. **Export**: The filtered data is saved in your specified format.
-
-## Interactive Selection Tips
-
-- **Draw polygons**: Click and drag to create a lasso selection around your region of interest
-- **Visual feedback**: Selected points are highlighted in green immediately
-- **Multiple gates**: Close each plot window to proceed to the next gate
-- **Final filtering**: Only events passing all gates are included in the output
-
----
-
-**Note**: This tool is designed for local use. Always run it from within the `flow-cytometry-analyzer` directory using `./run.sh`.
+MIT
