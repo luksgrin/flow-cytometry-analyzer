@@ -1,4 +1,4 @@
-# Flow Cytometry Analyzer
+# Rodrigolab's Flow Cytometry Analyzer
 
 An interactive filtering tool for Flow Cytometry Standard (FCS) files that allows you to manually select regions of interest using lasso selection on scatter plots. This is a free, open-source alternative to FlowJo for basic gating operations.
 

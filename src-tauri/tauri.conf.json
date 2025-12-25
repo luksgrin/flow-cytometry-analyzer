@@ -1,5 +1,5 @@
 {
-  "productName": "Flow Cytometry Analyzer",
+  "productName": "Rodrigolab's Flow Cytometry Analyzer",
   "version": "0.1.0",
   "identifier": "com.rodrigolab.flowcytometryanalyzer",
   "build": {
@@ -12,7 +12,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Flow Cytometry Analyzer",
+        "title": "Rodrigolab's Flow Cytometry Analyzer",
         "width": 1200,
         "height": 800,
         "minWidth": 900,
@@ -45,8 +45,15 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["app", "dmg"],
-    "icon": [],
+    "targets": ["app", "dmg", "msi", "deb", "appimage"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico",
+      "icons/icon.png"
+    ],
     "resources": [],
     "externalBin": [],
     "copyright": "",
@@ -65,6 +72,14 @@
       "signingIdentity": null,
       "providerShortName": null,
       "entitlements": null
+    },
+    "linux": {
+      "deb": {
+        "depends": []
+      },
+      "appimage": {
+        "bundleMediaFramework": false
+      }
     }
   },
   "plugins": {}

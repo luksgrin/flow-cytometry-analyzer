@@ -302,15 +302,14 @@ function drawPlot() {
         if (xGridRange < 2 && zoomLevel > 0.3) {
             increment = 0.2;
         }
+        // Draw all gridlines, including whole numbers
         for (let val = Math.floor(viewXMin / increment) * increment; val <= viewXMax; val += increment) {
-            if (Math.abs(val - Math.round(val)) > 0.01 || val === Math.round(val)) {
-                const x = margin + (val - viewXMin) / (viewXMax - viewXMin) * plotWidth;
-                if (x >= margin && x <= width - margin) {
-                    ctx.beginPath();
-                    ctx.moveTo(x, margin);
-                    ctx.lineTo(x, height - margin);
-                    ctx.stroke();
-                }
+            const x = margin + (val - viewXMin) / (viewXMax - viewXMin) * plotWidth;
+            if (x >= margin && x <= width - margin) {
+                ctx.beginPath();
+                ctx.moveTo(x, margin);
+                ctx.lineTo(x, height - margin);
+                ctx.stroke();
             }
         }
     } else {
@@ -337,15 +336,14 @@ function drawPlot() {
         if (yGridRange < 2 && zoomLevel > 0.3) {
             increment = 0.2;
         }
+        // Draw all gridlines, including whole numbers
         for (let val = Math.floor(viewYMin / increment) * increment; val <= viewYMax; val += increment) {
-            if (Math.abs(val - Math.round(val)) > 0.01 || val === Math.round(val)) {
-                const y = height - margin - (val - viewYMin) / (viewYMax - viewYMin) * plotHeight;
-                if (y >= margin && y <= height - margin) {
-                    ctx.beginPath();
-                    ctx.moveTo(margin, y);
-                    ctx.lineTo(width - margin, y);
-                    ctx.stroke();
-                }
+            const y = height - margin - (val - viewYMin) / (viewYMax - viewYMin) * plotHeight;
+            if (y >= margin && y <= height - margin) {
+                ctx.beginPath();
+                ctx.moveTo(margin, y);
+                ctx.lineTo(width - margin, y);
+                ctx.stroke();
             }
         }
     } else {
