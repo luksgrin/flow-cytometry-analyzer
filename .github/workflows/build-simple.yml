@@ -201,6 +201,27 @@ jobs:
           name: linux-x86_64
           path: artifacts/linux-x86_64
       
+      - name: Prepare release files
+        run: |
+          # Create a clean release directory
+          mkdir -p release-files
+          
+          # Copy only the installers (DMG, MSI, DEB)
+          # macOS ARM64 DMG
+          find artifacts/macos-arm64/dmg -name "*.dmg" -exec cp {} release-files/ \;
+          
+          # macOS Intel DMG
+          find artifacts/macos-x86_64/dmg -name "*.dmg" -exec cp {} release-files/ \;
+          
+          # Windows MSI
+          find artifacts/windows-x86_64/msi -name "*.msi" -exec cp {} release-files/ \;
+          
+          # Linux DEB (only DEB, not AppImage)
+          find artifacts/linux-x86_64/deb -name "*.deb" -exec cp {} release-files/ \;
+          
+          # Create source code archive
+          git archive --format=tar.gz --prefix=flow-cytometry-analyzer-${{ steps.get_version.outputs.VERSION }}/ -o release-files/source.tar.gz HEAD
+      
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
@@ -211,30 +232,33 @@ jobs:
             ### Downloads
             
             **macOS (Apple Silicon)**
-            - App Bundle: Download from artifacts below
-            - DMG: Download from artifacts below
+            - DMG Installer: `Rodrigolab's Flow Cytometry Analyzer_${{ steps.get_version.outputs.VERSION }}_aarch64.dmg`
             
             **macOS (Intel)**
-            - App Bundle: Download from artifacts below
-            - DMG: Download from artifacts below
+            - DMG Installer: `Rodrigolab's Flow Cytometry Analyzer_${{ steps.get_version.outputs.VERSION }}_x86_64.dmg`
             
             **Windows**
-            - MSI Installer: Download from artifacts below
+            - MSI Installer: `Rodrigolab's Flow Cytometry Analyzer_${{ steps.get_version.outputs.VERSION }}_x86_64.msi`
             
             **Linux (Ubuntu/Debian)**
-            - DEB Package: Download from artifacts below
-            - AppImage: Download from artifacts below
+            - DEB Package: `flow-cytometry-analyzer_${{ steps.get_version.outputs.VERSION }}_amd64.deb`
+            
+            **Source Code**
+            - Source Archive: `source.tar.gz`
             
             ### Installation Instructions
             
             - **macOS**: Open the DMG file and drag the app to Applications
             - **Windows**: Run the MSI installer
-            - **Linux**: Install the DEB package with `sudo dpkg -i <package.deb>` or run the AppImage directly
+            - **Linux**: Install the DEB package with `sudo dpkg -i flow-cytometry-analyzer_${{ steps.get_version.outputs.VERSION }}_amd64.deb`
             
             ### Changes
             See the commit history for details.
           files: |
-            artifacts/**/*
+            release-files/*.dmg
+            release-files/*.msi
+            release-files/*.deb
+            release-files/source.tar.gz
           draft: false
           prerelease: false
           tag_name: ${{ github.ref_name }}
