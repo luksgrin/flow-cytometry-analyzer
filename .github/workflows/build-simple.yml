@@ -248,8 +248,13 @@ jobs:
             
             ### Installation Instructions
             
-            - **macOS**: Open the DMG file and drag the app to Applications
-            - **Windows**: Run the MSI installer
+            - **macOS**: 
+              - Open the DMG file and drag the app to Applications
+              - If you see "app is damaged" error, run: `xattr -cr "/Applications/Rodrigolab's Flow Cytometry Analyzer.app"`
+              - Or right-click the app and select "Open" (then click "Open" in the security dialog)
+            - **Windows**: 
+              - Run the MSI installer
+              - If SmartScreen shows a warning, click "More info" then "Run anyway"
             - **Linux**: Install the DEB package with `sudo dpkg -i flow-cytometry-analyzer_${{ steps.get_version.outputs.VERSION }}_amd64.deb`
             
             ### Changes

@@ -241,6 +241,12 @@ After building, find your artifacts:
 - **macOS**: 
   - App: `src-tauri/target/<target>/release/bundle/macos/Rodrigolab's Flow Cytometry Analyzer.app`
   - DMG: `src-tauri/target/<target>/release/bundle/dmg/`
+  
+  **Note**: When running a locally built macOS app, you may encounter a "damaged and cannot be opened" error due to macOS Gatekeeper. To fix this, run:
+  ```bash
+  xattr -cr "src-tauri/target/<target>/release/bundle/macos/Rodrigolab's Flow Cytometry Analyzer.app"
+  ```
+  Or right-click the app and select "Open" (then click "Open" in the security dialog). See the [Installation Guide](installation.md#macos) for more details.
 - **Windows**: 
   - MSI: `src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/`
 - **Linux**: 
@@ -276,6 +282,12 @@ After building, find your artifacts:
 6. **macOS: Code signing warnings**
    - These are normal for local builds
    - For distribution, set up code signing in `tauri.conf.json`
+   
+7. **macOS: "App is damaged and cannot be opened"**
+   - This is macOS Gatekeeper blocking the unsigned app
+   - Remove quarantine attribute: `xattr -cr "/path/to/app.app"`
+   - Or right-click the app and select "Open"
+   - See [Troubleshooting Guide](troubleshooting.md#macos-app-is-damaged-and-cant-be-opened) for detailed instructions
 
 ### Getting Help
 

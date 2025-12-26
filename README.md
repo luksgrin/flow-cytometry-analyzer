@@ -33,6 +33,10 @@ Download pre-built binaries from the [GitHub Releases](https://github.com/luksgr
 - Windows (x86_64) - `.msi` installer
 - Linux (Ubuntu/Debian) - `.deb` packages and `.appimage` files
 
+**Note for macOS users:** If you see an error that the app is "damaged and cannot be opened", this is due to macOS Gatekeeper. See the [Installation Guide](docs/installation.md#macos) for instructions on how to bypass this.
+
+**Note for Windows users:** Windows SmartScreen may show a warning when installing. This is normal for unsigned applications. Click "More info" then "Run anyway" to proceed. See the [Installation Guide](docs/installation.md#windows) for details.
+
 #### Building from Source
 
 See [BUILD.md](BUILD.md) for detailed compilation instructions, or follow the quick start below.

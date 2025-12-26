@@ -6,17 +6,54 @@ Common issues and solutions when using or building Rodrigolab's Flow Cytometry A
 
 ### macOS: "App is damaged and can't be opened"
 
-**Solution:**
-1. Open System Preferences > Security & Privacy
-2. Click "Open Anyway" next to the blocked app
-3. Or run: `xattr -cr /Applications/Rodrigolab\'s\ Flow\ Cytometry\ Analyzer.app`
+This error occurs because the app is not code-signed. macOS Gatekeeper blocks unsigned apps downloaded from the internet. This is a security feature, not an actual problem with the app.
 
-### Windows: Installation blocked by Windows Defender
+**Solution (choose one method):**
 
-**Solution:**
-1. Click "More info" on the warning
-2. Click "Run anyway"
-3. Or add an exception in Windows Security settings
+**Method 1: Remove quarantine attribute (Recommended)**
+```bash
+xattr -cr "/Applications/Rodrigolab's Flow Cytometry Analyzer.app"
+```
+Then open the app normally from Applications.
+
+**Method 2: Right-click to open**
+- Right-click (or Control-click) the app in Applications
+- Select "Open" from the context menu
+- Click "Open" in the security dialog
+- This only needs to be done once
+
+**Method 3: System Settings**
+- Go to System Settings > Privacy & Security (or System Preferences > Security & Privacy on older macOS)
+- Scroll down to find the blocked app message
+- Click "Open Anyway"
+- Confirm by clicking "Open"
+
+After using any of these methods, you can open the app normally in the future.
+
+### Windows: SmartScreen warning "Windows protected your PC"
+
+This warning appears because the application is not code-signed. Windows Defender SmartScreen blocks unrecognized applications as a security measure. This is normal for unsigned software.
+
+**Solution (choose one method):**
+
+**Method 1: Use "More info" (Recommended)**
+1. When the SmartScreen warning appears, click **"More info"**
+2. Click **"Run anyway"** to proceed with installation
+3. This only needs to be done once per download
+
+**Method 2: Unblock the file**
+1. Right-click the downloaded `.msi` file
+2. Select **"Properties"**
+3. If you see an **"Unblock"** checkbox at the bottom, check it
+4. Click **"OK"**
+5. Run the installer normally
+
+**Method 3: Windows Security Settings**
+1. Open Windows Security (Settings > Privacy & Security > Windows Security)
+2. Go to **"App & browser control"**
+3. Under **"Check apps and files"**, you can temporarily lower the protection level (not recommended for long-term)
+
+**Note:** After the first installation, Windows will remember your choice and future updates should install without the warning.
 
 ### Linux: Dependency errors when installing DEB
 

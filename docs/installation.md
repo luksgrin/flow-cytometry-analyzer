@@ -16,7 +16,27 @@ The easiest way to get started is to download pre-built binaries from the [GitHu
 
 3. Drag the application to your Applications folder
 
-4. Open the application from Applications (you may need to allow it in System Preferences > Security & Privacy on first launch)
+4. **Important - macOS Gatekeeper:** Since the app is not code-signed, macOS may show an error that the app is "damaged and cannot be opened". To fix this, use one of the following methods:
+
+   **Method 1: Remove quarantine attribute (Recommended)**
+   ```bash
+   xattr -cr "/Applications/Rodrigolab's Flow Cytometry Analyzer.app"
+   ```
+   Then open the app normally from Applications.
+
+   **Method 2: Right-click to open**
+   - Right-click (or Control-click) the app in Applications
+   - Select "Open" from the context menu
+   - Click "Open" in the security dialog
+   - This only needs to be done once
+
+   **Method 3: System Settings**
+   - Go to System Settings > Privacy & Security
+   - Scroll down to find the blocked app message
+   - Click "Open Anyway"
+   - Confirm by clicking "Open"
+
+   After using any of these methods, you can open the app normally in the future.
 
 ### Windows
 
@@ -24,9 +44,14 @@ The easiest way to get started is to download pre-built binaries from the [GitHu
 
 2. Double-click the MSI file to run the installer
 
-3. Follow the installation wizard
+3. **Windows SmartScreen Warning:** Windows may show a warning that it protected your PC. This is normal for unsigned applications. To proceed:
+   - Click **"More info"** on the warning screen
+   - Click **"Run anyway"** to continue installation
+   - Alternatively, right-click the MSI file, select **"Properties"**, check **"Unblock"** if available, then run the installer
 
-4. Launch the application from the Start menu
+4. Follow the installation wizard
+
+5. Launch the application from the Start menu
 
 ### Linux (Ubuntu/Debian)
 

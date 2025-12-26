@@ -39,6 +39,8 @@ It serves as a free alternative to FlowJo for basic gating operations.
 ## Getting Started
 
 1. [Download and install](installation.md) the application for your platform
+   - **macOS users**: If you see an "app is damaged" error, see the [Installation Guide](installation.md#macos) for instructions on bypassing macOS Gatekeeper
+   - **Windows users**: If SmartScreen shows a warning, see the [Installation Guide](installation.md#windows) for instructions on bypassing the warning
 2. [Learn the basics](usage.md) of using the tool
 3. Start analyzing your FCS files!
 
