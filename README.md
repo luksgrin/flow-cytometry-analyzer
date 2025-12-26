@@ -21,28 +21,45 @@ Built with Rust and Tauri for cross-platform desktop applications.
 ### Prerequisites
 
 - Rust (latest stable version)
-- Node.js and npm
-- System dependencies for Tauri (see [Tauri prerequisites](https://tauri.app/v1/guides/getting-started/prerequisites))
+- Node.js (v20 or later) and npm
+- System dependencies for Tauri (see [Tauri prerequisites](https://tauri.app/v2/guides/getting-started/prerequisites))
 
-### Building
+### Installation
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd flow-cytometry-analyzer
-```
+#### Pre-built Binaries (Recommended)
 
-2. Install frontend dependencies:
-```bash
-npm install
-```
+Download pre-built binaries from the [GitHub Releases](https://github.com/luksgrin/flow-cytometry-analyzer/releases) page. Releases are automatically built for:
+- macOS (ARM64 and Intel) - `.dmg` files
+- Windows (x86_64) - `.msi` installer
+- Linux (Ubuntu/Debian) - `.deb` packages and `.appimage` files
 
-3. Build the application:
-```bash
-npm run tauri build
-```
+#### Building from Source
 
-The built application will be in `src-tauri/target/release/bundle/`.
+See [BUILD.md](BUILD.md) for detailed compilation instructions, or follow the quick start below.
+
+**Quick Start:**
+
+1. **Prerequisites:**
+   - Rust (latest stable) - [Install Rust](https://rustup.rs/)
+   - Node.js v20+ and npm - [Install Node.js](https://nodejs.org/)
+   - Platform-specific build tools (see [BUILD.md](BUILD.md))
+
+2. **Clone and build:**
+   ```bash
+   git clone https://github.com/luksgrin/flow-cytometry-analyzer.git
+   cd flow-cytometry-analyzer
+   npm install
+   npm run build
+   cd src-tauri
+   cargo tauri build
+   ```
+
+3. **Find your build:**
+   - macOS: `src-tauri/target/release/bundle/macos/`
+   - Windows: `src-tauri/target/release/bundle/msi/`
+   - Linux: `src-tauri/target/release/bundle/deb/` or `bundle/appimage/`
+
+For detailed platform-specific instructions, see [BUILD.md](BUILD.md).
 
 ### Development
 
@@ -74,6 +91,17 @@ npm run tauri dev
 - **CSV**: Comma-separated values
 - **Excel**: XLSX format with metadata and data sheets
 - **Parquet**: Compressed columnar format
+
+## Platform Support
+
+This application is built with Tauri and supports:
+- **macOS**: 10.13+ (both Apple Silicon and Intel)
+- **Windows**: Windows 10+
+- **Linux**: Ubuntu 22.04+, Debian 11+ (x86_64)
+
+## Building for Multiple Platforms
+
+The project includes GitHub Actions workflows (`.github/workflows/build-simple.yml`) that automatically build for all supported platforms. To build locally for different platforms, you'll need to set up cross-compilation or use the appropriate build environment.
 
 ## License
 

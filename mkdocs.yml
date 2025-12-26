@@ -1,0 +1,65 @@
+site_name: Rodrigolab's Flow Cytometry Analyzer
+site_description: Interactive filtering tool for Flow Cytometry Standard (FCS) files
+site_author: Rodrigolab
+site_url: https://luksgrin.github.io/flow-cytometry-analyzer
+
+repo_name: luksgrin/flow-cytometry-analyzer
+repo_url: https://github.com/luksgrin/flow-cytometry-analyzer
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: dark
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.annotate
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - User Guide: usage.md
+  - Building from Source: building.md
+  - Troubleshooting: troubleshooting.md
+
+plugins:
+  - search
+  - git-revision-date-localized:
+      enable_creation_date: true
+
+copyright: Copyright &copy; 2024 Rodrigolab
+

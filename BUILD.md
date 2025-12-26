@@ -1,89 +1,180 @@
-# Building Flow Cytometry Analyzer
+# Building Rodrigolab's Flow Cytometry Analyzer
+
+## Overview
+
+This project uses Tauri 2.0 to build cross-platform desktop applications. The build process compiles a Rust backend and bundles it with a web frontend.
+
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Platform-Specific Build Instructions](#platform-specific-build-instructions)
+- [Output Locations](#output-locations)
+- [GitHub Actions](#github-actions)
+- [Troubleshooting](#troubleshooting)
+
+## Supported Platforms
+
+- **macOS**: ARM64 (aarch64-apple-darwin) and Intel (x86_64-apple-darwin)
+- **Windows**: x86_64 (x86_64-pc-windows-msvc)
+- **Linux**: x86_64 (x86_64-unknown-linux-gnu) - Ubuntu 22.04+, Debian 11+
+
+## Prerequisites
+
+### Required for All Platforms
+
+1. **Rust** (latest stable version)
+   ```bash
+   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   source $HOME/.cargo/env
+   ```
+
+2. **Node.js** (v20 or later) and npm
+   - Download from [nodejs.org](https://nodejs.org/)
+   - Or use a version manager like `nvm`
+
+3. **Tauri CLI** (installed automatically during build, or manually):
+   ```bash
+   cargo install tauri-cli --locked
+   ```
+
+### Platform-Specific Requirements
+
+#### macOS
+- Xcode Command Line Tools:
+  ```bash
+  xcode-select --install
+  ```
+
+#### Windows
+- Microsoft Visual C++ Build Tools
+- Windows SDK
+- Install via [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
+
+#### Linux (Ubuntu/Debian)
+- System dependencies (see Linux build section below)
 
 ## Quick Start
 
-### Development
+### Development Mode
+
 ```bash
+# Clone the repository
+git clone https://github.com/luksgrin/flow-cytometry-analyzer.git
 cd flow-cytometry-analyzer
+
+# Install dependencies
 npm install
-npm run dev  # In one terminal
-cd src-tauri
-cargo tauri dev  # In another terminal
+
+# Run in development mode
+npm run tauri dev
 ```
 
-### Production Build (Universal macOS)
-
-To build a universal macOS app bundle (.app) and DMG supporting both Apple Silicon and Intel:
+### Production Build (Current Platform)
 
 ```bash
-cd flow-cytometry-analyzer
-./build-universal.sh
+# Install dependencies
+npm install
+
+# Build frontend
+npm run build
+
+# Build application
+cd src-tauri
+cargo tauri build
 ```
 
-This script will:
-1. Build the frontend (npm run build)
-2. Compile Rust backend for both architectures
-3. Create a universal binary using `lipo`
-4. Build the macOS app bundle and DMG
+The built application will be in `src-tauri/target/release/bundle/`.
 
-## Manual Build Steps
+## Building for Specific Platforms
 
-If you prefer to build manually:
+### macOS
 
-1. **Install Rust targets:**
-   ```bash
-   rustup target add aarch64-apple-darwin x86_64-apple-darwin
-   ```
+#### ARM64 (Apple Silicon)
+```bash
+npm run build
+cd src-tauri
+cargo tauri build --target aarch64-apple-darwin --bundles app,dmg
+```
 
-2. **Build frontend:**
-   ```bash
-   npm install
-   npm run build
-   ```
+#### Intel
+```bash
+npm run build
+cd src-tauri
+cargo tauri build --target x86_64-apple-darwin --bundles app,dmg
+```
 
-3. **Build Rust for both architectures:**
-   ```bash
-   cargo build --manifest-path src-tauri/Cargo.toml --release --target aarch64-apple-darwin
-   cargo build --manifest-path src-tauri/Cargo.toml --release --target x86_64-apple-darwin
-   ```
+### Windows
 
-4. **Create universal binary:**
-   ```bash
-   mkdir -p src-tauri/target/universal-apple-darwin/release
-   lipo -create \
-     src-tauri/target/aarch64-apple-darwin/release/flow-cytometry-analyzer \
-     src-tauri/target/x86_64-apple-darwin/release/flow-cytometry-analyzer \
-     -output src-tauri/target/universal-apple-darwin/release/flow-cytometry-analyzer
-   ```
+```bash
+npm run build
+cd src-tauri
+cargo tauri build --target x86_64-pc-windows-msvc --bundles msi
+```
 
-5. **Build app bundle:**
-   ```bash
-   # Copy universal binary to aarch64 target for Tauri bundling
-   cp src-tauri/target/universal-apple-darwin/release/flow-cytometry-analyzer \
-      src-tauri/target/aarch64-apple-darwin/release/flow-cytometry-analyzer
-   
-   cd src-tauri
-   cargo tauri build --target aarch64-apple-darwin
-   ```
+### Linux (Ubuntu/Debian)
+
+First, install system dependencies:
+```bash
+sudo apt-get update
+sudo apt-get install -y \
+  libwebkit2gtk-4.1-dev \
+  build-essential \
+  curl \
+  wget \
+  file \
+  libxdo-dev \
+  libssl-dev \
+  libayatana-appindicator3-dev \
+  librsvg2-dev \
+  patchelf
+```
+
+Then build:
+```bash
+npm run build
+cd src-tauri
+# For Debian package
+cargo tauri build --target x86_64-unknown-linux-gnu --bundles deb
+# For AppImage
+cargo tauri build --target x86_64-unknown-linux-gnu --bundles appimage
+```
 
 ## Output Locations
 
-After building, you'll find:
-- **App Bundle**: `src-tauri/target/aarch64-apple-darwin/release/bundle/macos/Flow Cytometry Analyzer.app`
-- **DMG**: `src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/`
+After building, artifacts will be in:
+- **macOS**: `src-tauri/target/<target>/release/bundle/macos/` and `bundle/dmg/`
+- **Windows**: `src-tauri/target/<target>/release/bundle/msi/`
+- **Linux**: `src-tauri/target/<target>/release/bundle/deb/` or `bundle/appimage/`
 
-## Code Signing (Optional)
+## GitHub Actions
 
-To sign your app for distribution:
+The project includes automated builds via GitHub Actions (`.github/workflows/build-simple.yml`) that build for all platforms on push to main/master or manual trigger.
 
-```bash
-codesign --deep --force --verify --verbose --sign "Developer ID Application: Your Name (Team ID)" \
-  "src-tauri/target/aarch64-apple-darwin/release/bundle/macos/Flow Cytometry Analyzer.app"
-```
+## Prerequisites
+
+- **Rust**: Latest stable version
+- **Node.js**: v20 or later
+- **npm**: Comes with Node.js
+- **Tauri CLI**: Installed automatically via `cargo install tauri-cli --locked`
+
+### Platform-Specific Requirements
+
+#### macOS
+- Xcode Command Line Tools
+- No additional dependencies needed
+
+#### Windows
+- Microsoft Visual C++ Build Tools
+- Windows SDK
+
+#### Linux
+- See system dependencies listed above
+- GTK+ 3 development libraries
 
 ## Troubleshooting
 
-- **Icon errors**: Make sure `src-tauri/icons/icon.png` exists. The build script should handle this.
-- **Build failures**: Ensure you have both Rust targets installed: `rustup target add aarch64-apple-darwin x86_64-apple-darwin`
-- **Tauri errors**: Make sure Tauri CLI is installed: `cargo install tauri-cli --locked`
-
+- **Icon errors**: Ensure all icon files exist in `src-tauri/icons/`
+- **Build failures**: Check that all Rust targets are installed: `rustup target add <target>`
+- **Tauri errors**: Verify Tauri CLI is installed: `cargo install tauri-cli --locked`
+- **Linux dependencies**: Install all required system packages listed above
