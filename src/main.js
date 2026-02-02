@@ -617,6 +617,39 @@ function drawPlot() {
             }
         }
     }
+
+    // Axis titles: show which channel is on each axis
+    if (selectedChannels.length >= 2) {
+        const xChannelName = selectedChannels[0];
+        const yChannelName = selectedChannels[1];
+
+        // X-axis label (below the plot, centered)
+        const xTitleDiv = document.createElement('div');
+        xTitleDiv.style.position = 'absolute';
+        xTitleDiv.style.left = `${margin + plotWidth / 2}px`;
+        xTitleDiv.style.top = `${height - margin + 22}px`;
+        xTitleDiv.style.transform = 'translateX(-50%)';
+        xTitleDiv.style.color = axisColor;
+        xTitleDiv.style.fontSize = '13px';
+        xTitleDiv.style.fontWeight = '600';
+        xTitleDiv.style.whiteSpace = 'nowrap';
+        xTitleDiv.textContent = xChannelName;
+        axisLabelsContainer.appendChild(xTitleDiv);
+
+        // Y-axis label (left of plot, rotated 90°) — position left of tick labels (tick labels at margin - 30)
+        const yTitleLeft = 14;
+        const yTitleDiv = document.createElement('div');
+        yTitleDiv.style.position = 'absolute';
+        yTitleDiv.style.left = `${yTitleLeft}px`;
+        yTitleDiv.style.top = `${margin + plotHeight / 2}px`;
+        yTitleDiv.style.transform = 'translate(-50%, -50%) rotate(-90deg)';
+        yTitleDiv.style.color = axisColor;
+        yTitleDiv.style.fontSize = '13px';
+        yTitleDiv.style.fontWeight = '600';
+        yTitleDiv.style.whiteSpace = 'nowrap';
+        yTitleDiv.textContent = yChannelName;
+        axisLabelsContainer.appendChild(yTitleDiv);
+    }
 }
 
 // Convert screen coordinates to data coordinates
