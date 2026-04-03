@@ -61,15 +61,6 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
-      - name: Install Tauri CLI
-        uses: tauri-apps/tauri-action@v0
-        with:
-          tagName: ${{ github.ref_name }}
-          releaseName: 'Rodrigolab\'s Flow Cytometry Analyzer v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
-          releaseDraft: true
-          prerelease: false
-
       - name: Install system dependencies (Linux only)
         if: matrix.os == 'ubuntu-22.04'
         run: |
@@ -92,7 +83,7 @@ jobs:
         with:
           projectPath: ./src-tauri
           tagName: ${{ github.ref_name }}
-          releaseName: 'Rodrigolab\'s Flow Cytometry Analyzer v__VERSION__'
+          releaseName: "Rodrigolab's Flow Cytometry Analyzer v__VERSION__"
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
