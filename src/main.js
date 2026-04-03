@@ -42,6 +42,23 @@ const resetFilterBtn = document.getElementById('resetFilterBtn');
 
 const ctx = plotCanvas.getContext('2d');
 
+// Safe min/max for large arrays (avoids call stack overflow with spread operator)
+function arrayMin(arr) {
+    let min = arr[0];
+    for (let i = 1; i < arr.length; i++) {
+        if (arr[i] < min) min = arr[i];
+    }
+    return min;
+}
+
+function arrayMax(arr) {
+    let max = arr[0];
+    for (let i = 1; i < arr.length; i++) {
+        if (arr[i] > max) max = arr[i];
+    }
+    return max;
+}
+
 // Initialize canvas
 function setupCanvas() {
     const dpr = window.devicePixelRatio || 1;
@@ -256,25 +273,25 @@ function drawPlot() {
     if (xLog) {
         xData = currentPoints.map(p => p.x).filter(x => x > 0);
         if (xData.length === 0) return;
-        xMin = Math.log10(Math.min(...xData));
-        xMax = Math.log10(Math.max(...xData));
+        xMin = Math.log10(arrayMin(xData));
+        xMax = Math.log10(arrayMax(xData));
     } else {
         xData = currentPoints.map(p => p.x);
-        xMin = Math.min(...xData);
-        xMax = Math.max(...xData);
+        xMin = arrayMin(xData);
+        xMax = arrayMax(xData);
     }
-    
+
     if (yLog) {
         yData = currentPoints.map(p => p.y).filter(y => y > 0);
         if (yData.length === 0) return;
-        yMin = Math.log10(Math.min(...yData));
-        yMax = Math.log10(Math.max(...yData));
+        yMin = Math.log10(arrayMin(yData));
+        yMax = Math.log10(arrayMax(yData));
     } else {
         yData = currentPoints.map(p => p.y);
-        yMin = Math.min(...yData);
-        yMax = Math.max(...yData);
+        yMin = arrayMin(yData);
+        yMax = arrayMax(yData);
     }
-    
+
     const xRange = xMax - xMin;
     const yRange = yMax - yMin;
     const scaledXRange = xRange / zoomLevel;
@@ -285,7 +302,7 @@ function drawPlot() {
     const viewXMax = centerX + scaledXRange / 2;
     const viewYMin = centerY - scaledYRange / 2;
     const viewYMax = centerY + scaledYRange / 2;
-    
+
     // Draw gridlines and axes
     const isDark = document.body.getAttribute('data-theme') === 'dark' || document.body.getAttribute('data-theme') === 'dim';
     const gridColor = isDark ? '#8b949e' : '#999';
@@ -669,25 +686,25 @@ function screenToData(screenX, screenY) {
     if (xLog) {
         xData = currentPoints.map(p => p.x).filter(x => x > 0);
         if (xData.length === 0) return null;
-        xMin = Math.log10(Math.min(...xData));
-        xMax = Math.log10(Math.max(...xData));
+        xMin = Math.log10(arrayMin(xData));
+        xMax = Math.log10(arrayMax(xData));
     } else {
         xData = currentPoints.map(p => p.x);
-        xMin = Math.min(...xData);
-        xMax = Math.max(...xData);
+        xMin = arrayMin(xData);
+        xMax = arrayMax(xData);
     }
-    
+
     if (yLog) {
         yData = currentPoints.map(p => p.y).filter(y => y > 0);
         if (yData.length === 0) return null;
-        yMin = Math.log10(Math.min(...yData));
-        yMax = Math.log10(Math.max(...yData));
+        yMin = Math.log10(arrayMin(yData));
+        yMax = Math.log10(arrayMax(yData));
     } else {
         yData = currentPoints.map(p => p.y);
-        yMin = Math.min(...yData);
-        yMax = Math.max(...yData);
+        yMin = arrayMin(yData);
+        yMax = arrayMax(yData);
     }
-    
+
     const xRange = xMax - xMin;
     const yRange = yMax - yMin;
     const scaledXRange = xRange / zoomLevel;
@@ -698,7 +715,7 @@ function screenToData(screenX, screenY) {
     const viewXMax = centerX + scaledXRange / 2;
     const viewYMin = centerY - scaledYRange / 2;
     const viewYMax = centerY + scaledYRange / 2;
-    
+
     // Convert screen coordinates to data coordinates
     const normalizedX = (screenX - margin) / plotWidth;
     const normalizedY = (height - margin - screenY) / plotHeight;
@@ -758,25 +775,25 @@ plotCanvas.addEventListener('mousemove', (e) => {
         if (xLog) {
             xData = currentPoints.map(p => p.x).filter(x => x > 0);
             if (xData.length === 0) return;
-            xMin = Math.log10(Math.min(...xData));
-            xMax = Math.log10(Math.max(...xData));
+            xMin = Math.log10(arrayMin(xData));
+            xMax = Math.log10(arrayMax(xData));
         } else {
             xData = currentPoints.map(p => p.x);
-            xMin = Math.min(...xData);
-            xMax = Math.max(...xData);
+            xMin = arrayMin(xData);
+            xMax = arrayMax(xData);
         }
-        
+
         if (yLog) {
             yData = currentPoints.map(p => p.y).filter(y => y > 0);
             if (yData.length === 0) return;
-            yMin = Math.log10(Math.min(...yData));
-            yMax = Math.log10(Math.max(...yData));
+            yMin = Math.log10(arrayMin(yData));
+            yMax = Math.log10(arrayMax(yData));
         } else {
             yData = currentPoints.map(p => p.y);
-            yMin = Math.min(...yData);
-            yMax = Math.max(...yData);
+            yMin = arrayMin(yData);
+            yMax = arrayMax(yData);
         }
-        
+
         const xRange = xMax - xMin;
         const yRange = yMax - yMin;
         const scaledXRange = xRange / zoomLevel;
@@ -853,28 +870,28 @@ plotCanvas.addEventListener('wheel', (e) => {
     if (xLog) {
         xData = currentPoints.map(p => p.x).filter(x => x > 0);
         if (xData.length === 0) return;
-        xMin = Math.log10(Math.min(...xData));
-        xMax = Math.log10(Math.max(...xData));
+        xMin = Math.log10(arrayMin(xData));
+        xMax = Math.log10(arrayMax(xData));
     } else {
         xData = currentPoints.map(p => p.x);
-        xMin = Math.min(...xData);
-        xMax = Math.max(...xData);
+        xMin = arrayMin(xData);
+        xMax = arrayMax(xData);
     }
-    
+
     if (yLog) {
         yData = currentPoints.map(p => p.y).filter(y => y > 0);
         if (yData.length === 0) return;
-        yMin = Math.log10(Math.min(...yData));
-        yMax = Math.log10(Math.max(...yData));
+        yMin = Math.log10(arrayMin(yData));
+        yMax = Math.log10(arrayMax(yData));
     } else {
         yData = currentPoints.map(p => p.y);
-        yMin = Math.min(...yData);
-        yMax = Math.max(...yData);
+        yMin = arrayMin(yData);
+        yMax = arrayMax(yData);
     }
-    
+
     const xRange = xMax - xMin;
     const yRange = yMax - yMin;
-    
+
     // Convert mouse point to data coordinates
     let mouseDataX, mouseDataY;
     if (xLog) {
